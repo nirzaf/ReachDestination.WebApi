@@ -21,22 +21,25 @@ namespace Infrastructure.Persistence.Repositories
 
             if (response.SelectedValue)
             {
-                if (busRoutes?.TrueValue <= 15)
+                switch (busRoutes?.TrueValue <= 15)
                 {
-                    var city = await _context.BusStations.FindAsync(busRoutes.TrueValue);
-                    var routes = new BusRoute
+                    case true:
                     {
-                        RouteNumber = 123,
-                        CurrentCity = city?.CityName,
-                        TrueValue = 0,
-                        FalseValue = 0,
-                        Question = ""
-                    };
+                        var city = await _context.BusStations.FindAsync(busRoutes.TrueValue);
+                        var routes = new BusRoute
+                        {
+                            RouteNumber = 123,
+                            CurrentCity = city?.CityName,
+                            TrueValue = 0,
+                            FalseValue = 0,
+                            Question = ""
+                        };
 
-                    return routes;
+                        return routes;
+                    }
+                    default:
+                        return await _context.BusRoutes.FindAsync(busRoutes?.TrueValue);
                 }
-
-                return await _context.BusRoutes.FindAsync(busRoutes?.TrueValue);
             }
             else
             {
