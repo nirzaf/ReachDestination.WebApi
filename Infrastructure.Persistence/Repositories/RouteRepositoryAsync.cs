@@ -19,46 +19,51 @@ namespace Infrastructure.Persistence.Repositories
         {
             var busRoutes = await _context.BusRoutes.FindAsync(response.BusRouteNo);
 
-            if (response.SelectedValue)
+            switch (response.SelectedValue)
             {
-                switch (busRoutes?.TrueValue <= 15)
-                {
-                    case true:
+                case true:
+                    switch (busRoutes?.TrueValue <= 15)
                     {
-                        var city = await _context.BusStations.FindAsync(busRoutes.TrueValue);
-                        var routes = new BusRoute
+                        case true:
                         {
-                            RouteNumber = 123,
-                            CurrentCity = city?.CityName,
-                            TrueValue = 0,
-                            FalseValue = 0,
-                            Question = ""
-                        };
+                            var city = await _context.BusStations.FindAsync(busRoutes.TrueValue);
+                            var routes = new BusRoute
+                            {
+                                RouteNumber = 123,
+                                CurrentCity = city?.CityName,
+                                TrueValue = 0,
+                                FalseValue = 0,
+                                Question = ""
+                            };
 
-                        return routes;
+                            return routes;
+                        }
+                        default:
+                            return await _context.BusRoutes.FindAsync(busRoutes?.TrueValue);
                     }
-                    default:
-                        return await _context.BusRoutes.FindAsync(busRoutes?.TrueValue);
-                }
-            }
-            else
-            {
-                if (busRoutes?.TrueValue <= 15)
+
+                default:
                 {
-                    var city = await _context.BusStations.FindAsync(busRoutes.FalseValue);
-                    var routes = new BusRoute
+                    switch (busRoutes?.TrueValue <= 15)
                     {
-                        RouteNumber = 123,
-                        CurrentCity = city?.CityName,
-                        TrueValue = 0,
-                        FalseValue = 0,
-                        Question = ""
-                    };
+                        case true:
+                        {
+                            var city = await _context.BusStations.FindAsync(busRoutes.FalseValue);
+                            var routes = new BusRoute
+                            {
+                                RouteNumber = 123,
+                                CurrentCity = city?.CityName,
+                                TrueValue = 0,
+                                FalseValue = 0,
+                                Question = ""
+                            };
 
-                    return routes;
+                            return routes;
+                        }
+                        default:
+                            return await _context.BusRoutes.FindAsync(busRoutes?.FalseValue);
+                    }
                 }
-
-                return await _context.BusRoutes.FindAsync(busRoutes?.FalseValue);
             }
         }
     }
